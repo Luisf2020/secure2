@@ -10,6 +10,24 @@ const ls = {
   get : (k,d=[])=>JSON.parse(localStorage.getItem(k)||JSON.stringify(d))
 };
 
+
+/* ── Semilla de un vecino de prueba ── */
+(function seedDemoVecino() {
+  const DEMO = { user: 'vecino1', pass: 'demo123', role: 'vecino', house: '100' };
+  // Asegurarnos de tener un registro de residentes para la casa 100
+  const residents = ls.get('residents', []);
+  if (!residents.some(r => r.house === DEMO.house)) {
+    residents.push({ name: 'Demo Vecino', house: DEMO.house, phone: '0000-0000', addr: 'Calle Demo #100' });
+    ls.set('residents', residents);
+  }
+  // Sembrar el usuario si no existe
+  const users = ls.get('users', []);
+  if (!users.some(u => u.user === DEMO.user)) {
+    users.push(DEMO);
+    ls.set('users', users);
+  }
+})();
+
 /* ── Semilla / Garantía de usuarios base ── */
 (function ensureBaseUsers() {
   const SUPER = { user: 'rootadmin', pass: 'root2025', role: 'super' };
