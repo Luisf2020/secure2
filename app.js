@@ -475,3 +475,41 @@ function initApp(){
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('service-worker.js');
 }
+
+/* ────────────────────────────────────────────────────────────
+   Override de login para aceptar demo de vecino en cualquier origen
+   (colocar al final de app.js)
+   ──────────────────────────────────────────────────────────── */
+;(function(){
+  const DEMO_USER = 'vecino1004';
+  const DEMO_PASS = 'pass1004';
+
+  const form = document.getElementById('loginForm');
+  if (!form) return;
+
+  // Guardamos el onsubmit original
+  const originalOnSubmit = form.onsubmit;
+
+  form.onsubmit = function(e) {
+    e.preventDefault();
+
+    const u = $('#user').value.trim();
+    const p = $('#pass').value.trim();
+
+    // 1) Si coinciden con el demo, forzamos login de vecino
+    if (u === DEMO_USER && p === DEMO_PASS) {
+      role = 'vecino';
+      currentUser = DEMO_USER;
+      currentHouse = DEMO_USER.replace('vecino', ''); // '1004'
+      // Mostrar portal vecino
+      $('#login').style.display = 'none';
+      initPortal();
+      show('#portal');
+      return;
+    }
+
+    // 2) Si no es demo, delegamos al handler original
+    return originalOnSubmit.call(form, e);
+  };
+})();
+
