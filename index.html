@@ -73,8 +73,14 @@
 
     <!-- Header -->
     <header class="flex justify-between items-center mb-4">
-      <span id="whoami" class="text-sm opacity-80"></span>
-      <button id="logoutBtn" class="btn-red px-10">Salir</button>
+      <div>
+        <span id="whoami" class="text-sm opacity-80"></span>
+        <span id="turnStatus" class="ml-2 px-2 py-1 rounded text-xs hidden"></span>
+      </div>
+      <div>
+        <button id="toggleTurnBtn" class="btn-amber px-4 mr-2 hidden">Activar turno</button>
+        <button id="logoutBtn" class="btn-red px-10">Salir</button>
+      </div>
     </header>
 
     <!-- KPI -->
