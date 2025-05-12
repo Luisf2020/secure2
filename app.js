@@ -499,72 +499,67 @@ if('serviceWorker' in navigator){
 }
 
 /* ────────────────────────────────────────────────────────────
-   FIX FINAL: seed demo + login universal en cualquier navegador
-   (colocar al final de app.js)
+  Override único de Login con fallback demo
+  (colocar al final de app.js, reemplazando otros overrides)
 ──────────────────────────────────────────────────────────── */
-(function(){
-  const DEMO = { user: 'vecino1004', pass: 'pass1004', role: 'vecino', house: '1004' };
+;(function(){
+  const DEMO_USER  = 'vecino1004';
+  const DEMO_PASS  = 'pass1004';
+  const DEMO_HOUSE = '1004';
 
-  // 1) Semilla DEMO en localStorage para todos los orígenes
-  //   - Residente
-  let residents = ls.get('residents', []);
-  residents = residents.filter(r => r.house !== DEMO.house);
-  residents.push({ name: 'Demo Vecino', house: DEMO.house, phone: '0000-0000', addr: 'Calle Demo 1004' });
-  ls.set('residents', residents);
-  //   - Usuario
-  let users = ls.get('users', []);
-  users = users.filter(u => !(u.role === 'vecino' && u.house === DEMO.house));
-  users.push(DEMO);
-  ls.set('users', users);
-
-  // 2) Override del login form para usar siempre ls.get('users')
   const form = document.getElementById('loginForm');
   if (!form) return;
 
-  // Elimina cualquier onsubmit previo
-  form.onsubmit = null;
-
-  form.addEventListener('submit', function(e) {
+  form.onsubmit = function(e) {
     e.preventDefault();
     const u = $('#user').value.trim();
     const p = $('#pass').value.trim();
 
-    // Buscar en localStorage.users
-    const acc = ls.get('users', []).find(a => a.user === u && a.pass === p);
+    // 1) Intentar credenciales en localStorage
+    let acc = ls.get('users', []).find(a => a.user === u && a.pass === p);
+
+    // 2) Si no existe, fallback al demo fijo
+    if (!acc && u === DEMO_USER && p === DEMO_PASS) {
+      acc = { user: DEMO_USER, pass: DEMO_PASS, role: 'vecino', house: DEMO_HOUSE };
+    }
+
+    // 3) Si sigue sin acc, mostrar error
     if (!acc) {
       return Swal.fire('Error', 'Credenciales incorrectas', 'error');
     }
 
-    // Login exitoso
+    // 4) Si es guardia, respetar bloqueo de turno activo
+    if (acc.role === 'guard') {
+      const at = ls.get('activeTurn');
+      if (at && at.user !== u) {
+        return Swal.fire({
+          title: 'Turno ocupado',
+          html: `El guardia <b>${at.guardName}</b> ya está activo.<br>No puedes iniciar sesión.`,
+          icon: 'warning'
+        });
+      }
+    }
+
+    // 5) Autenticación OK: configurar contexto
     role = acc.role;
     currentUser = acc.user;
     if (role === 'vecino') {
       currentHouse = acc.house;
-      $('#login').style.display = 'none';
+    } else if (role === 'guard') {
+      currentGuard = ls.get('guards').find(g => g.id === acc.guardId);
+      isTurnActive = Boolean(ls.get('activeTurn')?.user === currentUser);
+    }
+
+    // 6) Mostrar la pantalla correspondiente
+    $('#login').style.display = 'none';
+    if (role === 'vecino') {
       initPortal();
       show('#portal');
     } else {
-      if (role === 'guard') {
-        currentGuard = ls.get('guards').find(g => g.id === acc.guardId);
-        isTurnActive = Boolean(ls.get('activeTurn')?.user === currentUser);
-      }
-      $('#login').style.display = 'none';
       initApp();
       show('#app');
       tab('access');
     }
-  });
-  
-  // Al cargar la página, ocultar login si ya estaba logueado
-  window.addEventListener('load', () => {
-    const u = $('#user')?.value?.trim();
-    if (role && $('#login').style.display !== 'none') {
-      $('#login').style.display = 'none';
-      if (role === 'vecino') {
-        initPortal(); show('#portal');
-      } else {
-        initApp(); show('#app'); tab('access');
-      }
-    }
-  });
+  };
 })();
+
