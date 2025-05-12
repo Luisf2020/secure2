@@ -1,32 +1,29 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Seguridad Primavera</title>
 
-  <!-- Tailwind + librerías -->
+  <!-- Tailwind y librerías de apoyo -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<!-- ═════════════════ LOGIN ═════════════════ -->
+<!-- ═════ LOGIN ═════ -->
 <section id="login" class="screen flex flex-col items-center justify-center min-h-screen">
   <div class="card max-w-md w-full">
     <div class="text-center mb-8">
       <!-- Trébol -->
       <svg viewBox="0 0 64 64" width="72" height="72" class="mx-auto mb-4">
-        <defs>
-          <linearGradient id="leaf" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#34d399" />
-            <stop offset="100%" stop-color="#059669" />
-          </linearGradient>
-        </defs>
+        <defs><linearGradient id="leaf" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#34d399"/>
+          <stop offset="100%" stop-color="#059669"/></linearGradient></defs>
         <g fill="url(#leaf)">
           <path d="M32 10a8 8 0 0 1 8 8c0 3-1 5-3 7 2-2 4-3 7-3a8 8 0 1 1 0 16c-3 0-5-1-7-3 2 2 3 4 3 7a8 8 0 1 1-16 0c0-3 1-5 3-7-2 2-4 3-7 3a8 8 0 1 1 0-16c3 0 5 1 7 3-2-2-3-4-3-7a8 8 0 0 1 8-8Z"/>
           <circle cx="32" cy="32" r="4"/>
@@ -37,17 +34,17 @@
     </div>
 
     <form id="loginForm" class="space-y-5">
-      <input id="user" class="field" placeholder="Usuario" required />
-      <input id="pass" type="password" class="field" placeholder="Contraseña" required />
+      <input id="user" class="field" placeholder="Usuario" required>
+      <input id="pass" type="password" class="field" placeholder="Contraseña" required>
       <button class="btn-primary">Ingresar</button>
     </form>
   </div>
 </section>
 
-<!-- ═════════════════ PORTAL DEL VECINO ═════════════════ -->
+<!-- ░░ PORTAL DEL VECINO ░░ -->
 <section id="portal" class="screen hidden p-4 min-h-screen">
   <div class="flex justify-between items-center mb-6">
-    <h1 class="text-3xl font-bold">Mi Portal</h1>
+    <h1 class="text-3xl font-bold">Mi Portal</h1>
     <button id="logoutVecino" class="btn-red px-6">Salir</button>
   </div>
 
@@ -57,30 +54,24 @@
   <div id="vecPagos" class="card-glass mb-6 max-h-60 overflow-y-auto"></div>
 
   <h2 class="title">Mis visitas</h2>
-  <button id="expCSV" class="btn-green w-auto mb-2 px-6">Descargar CSV</button>
+  <button id="expCSV" class="btn-green w-auto mb-2 px-6">Descargar CSV</button>
   <div id="vecVisitas" class="card-glass max-h-60 overflow-y-auto"></div>
 
   <h2 class="title mt-8">Actualizar contraseña</h2>
   <form id="vecPassForm" class="card-glass space-y-3 md:w-1/2 mb-10">
-    <input id="vecNewPass" type="password" class="field" placeholder="Nueva contraseña" required />
+    <input id="vecNewPass" type="password" class="field" placeholder="Nueva contraseña" required>
     <button class="btn-indigo">Guardar</button>
   </form>
 </section>
 
-<!-- ═════════════════ APLICACIÓN PRINCIPAL ═════════════════ -->
+<!-- ░░ APLICACIÓN PRINCIPAL ░░ -->
 <section id="app" class="screen hidden min-h-screen">
   <section id="dashboard" class="p-4">
 
-    <!-- Header -->
+    <!-- Encabezado -->
     <header class="flex justify-between items-center mb-4">
-      <div>
-        <span id="whoami" class="text-sm opacity-80"></span>
-        <span id="turnStatus" class="ml-2 px-2 py-1 rounded text-xs hidden"></span>
-      </div>
-      <div>
-        <button id="toggleTurnBtn" class="btn-amber px-4 mr-2 hidden">Activar turno</button>
-        <button id="logoutBtn" class="btn-red px-10">Salir</button>
-      </div>
+      <span id="whoami" class="text-sm opacity-80"></span>
+      <button id="logoutBtn" class="btn-red px-10">Salir</button>
     </header>
 
     <!-- KPI -->
@@ -91,165 +82,158 @@
       <button data-tab="access"    class="tab">Accesos</button>
       <button data-tab="bitacora"  class="tab">Bitácora</button>
       <button data-tab="profile"   class="tab hidden" id="profileTab">Cuenta</button>
-      <button data-tab="visits"    class="tab" id="visitsTab">Historial</button>
+      <button data-tab="visits"    class="tab" id="visitsTab">Historial de visitas</button>
 
-      <!-- CRUD y finanzas (ocultas para guardia) -->
+      <!-- Estas pestañas se ocultan al guardia vía JS -->
       <button data-tab="residents" class="tab">Residentes</button>
       <button data-tab="guards"    class="tab">Guardias</button>
       <button data-tab="companies" class="tab">Empresas</button>
       <button data-tab="payments"  class="tab">Pagos</button>
       <button data-tab="debts"     class="tab">Pendientes</button>
-
-      <!-- Ajustes admin -->
       <button data-tab="settings"  class="tab" id="settingsTab">Ajustes</button>
-
-      <!-- NUEVA pestaña para super‑admin -->
-      <button data-tab="requests"  class="tab hidden" id="reqTab">Solicitudes</button>
     </nav>
 
-    <!-- ───────────── ACCESOS ───────────── -->
+    <!-- ═════════════ ACCESOS ═════════════ -->
     <div id="access" class="tab-pane">
-      <h3 class="title">Entradas / Salidas</h3>
+      <h3 class="title">Entradas / Salidas</h3>
       <div class="grid md:grid-cols-2 gap-4 mb-4">
-        <!-- Formulario -->
+
         <form id="accessForm" class="card-glass space-y-2">
-          <input id="acNombre" class="field" placeholder="Nombre visita" required />
-          <input id="acId"     class="field" placeholder="Documento (opcional)" />
-          <input id="acHost"   class="field" list="hostList" placeholder="¿A quién visita?" required />
+          <input id="acNombre" class="field" placeholder="Nombre visita" required>
+          <input id="acId"     class="field" placeholder="Documento (opcional)">
+          <input id="acHost"   class="field" list="hostList" placeholder="¿A quién visita?" required>
           <datalist id="hostList"></datalist>
-          <input id="acHouse"  class="field" placeholder="Casa / Unidad" required />
-          <select id="acTipo"  class="field">
-            <option>Entrada</option><option>Salida</option>
-          </select>
+          <input id="acHouse"  class="field" placeholder="Casa / Unidad" required>
+          <select id="acTipo"  class="field"><option>Entrada</option><option>Salida</option></select>
           <button class="btn-amber">Registrar</button>
         </form>
 
-        <!-- Lista + botón limpiar -->
         <div>
-          <button id="clrAccess" class="btn-red w-auto mb-3 px-6">Limpiar historial</button>
+          <!-- Se oculta al guardia con JS -->
+          <button id="clrAccess" class="btn-red w-auto mb-3 px-6">
+            Limpiar historial
+          </button>
+
           <div id="accessList" class="card-glass overflow-y-auto max-h-80"></div>
         </div>
       </div>
     </div>
 
-    <!-- ───────────── BITÁCORA ───────────── -->
+    <!-- ═════════════ BITÁCORA ═════════════ -->
     <div id="bitacora" class="tab-pane hidden">
       <h3 class="title">Bitácora de incidentes</h3>
 
-      <button id="clrBitacora" class="btn-red w-auto mb-3 px-6">Limpiar bitácora</button>
+      <!-- Se oculta al guardia con JS -->
+      <button id="clrBitacora" class="btn-red w-auto mb-3 px-6">
+        Limpiar bitácora
+      </button>
 
       <form id="bitForm" class="card-glass space-y-2 md:w-1/2 mb-4">
-        <textarea id="bitText" rows="3" class="field" placeholder="Escribe la novedad…" required></textarea>
+        <textarea id="bitText" rows="3" class="field" placeholder="Escribe la novedad..." required></textarea>
         <button class="btn-amber">Registrar</button>
       </form>
 
       <div id="bitList" class="card-glass overflow-y-auto max-h-96"></div>
     </div>
 
-    <!-- ───────────── PERFIL GUARDIA ───────────── -->
+    <!-- ═════════════ PERFIL GUARDIA ═════════════ -->
     <div id="profile" class="tab-pane hidden">
       <h3 class="title">Actualizar contraseña</h3>
       <form id="guardPassForm" class="card-glass space-y-3 md:w-1/2">
-        <input id="guardNewPass" type="password" class="field" placeholder="Nueva contraseña" required />
+        <input id="guardNewPass" type="password" class="field" placeholder="Nueva contraseña" required>
         <button class="btn-indigo">Guardar</button>
       </form>
     </div>
 
-    <!-- ───────────── HISTORIAL VISITAS ───────────── -->
+    <!-- ═════════════ HISTORIAL VISITAS ═════════════ -->
     <div id="visits" class="tab-pane hidden">
       <h3 class="title">Historial de visitas</h3>
       <div id="visitsList" class="card-glass max-h-[32rem] overflow-y-auto"></div>
     </div>
 
-    <!-- ───────────── RESIDENTES ───────────── -->
+    <!-- (Residentes, Guardias, Empresas, Pagos, Deudas: pestañas completas) -->
+      <!-- ══════════════ RESIDENTES ══════════════ -->
     <div id="residents" class="tab-pane hidden">
       <h3 class="title">Residentes</h3>
       <form id="resForm" class="card-glass space-y-2 md:w-1/2 mb-4">
-        <input id="resName"  class="field" placeholder="Nombre completo" required />
-        <input id="resHouse" class="field" placeholder="Casa #" required />
-        <input id="resPhone" class="field" placeholder="Teléfono" required />
-        <input id="resAddr"  class="field" placeholder="Dirección" required />
+        <input id="resName"  class="field" placeholder="Nombre completo" required>
+        <input id="resHouse" class="field" placeholder="Casa #" required>
+        <input id="resPhone" class="field" placeholder="Teléfono" required>
+        <input id="resAddr"  class="field" placeholder="Dirección" required>
         <div class="grid sm:grid-cols-2 gap-2">
-          <input id="resUser" class="field" placeholder="Usuario (opcional)" />
-          <input id="resPass" class="field" placeholder="Contraseña (opcional)" />
+          <input id="resUser" class="field" placeholder="Usuario (opcional)">
+          <input id="resPass" class="field" placeholder="Contraseña (opcional)">
         </div>
         <button class="btn-green">Agregar</button>
       </form>
       <div id="resList" class="card-glass overflow-y-auto max-h-96"></div>
     </div>
 
-    <!-- ───────────── GUARDIAS ───────────── -->
+    <!-- ══════════════ GUARDIAS ══════════════ -->
     <div id="guards" class="tab-pane hidden">
       <h3 class="title">Guardias</h3>
       <form id="guardForm" class="card-glass space-y-2 md:w-1/2 mb-4">
-        <input id="gName"   class="field" placeholder="Nombre completo" required />
-        <input id="gPhone"  class="field" placeholder="Teléfono" required />
-        <input id="gIdCard" class="field" placeholder="Identidad / Documento (opcional)" />
+        <input id="gName"   class="field" placeholder="Nombre completo" required>
+        <input id="gPhone"  class="field" placeholder="Teléfono" required>
+        <input id="gIdCard" class="field" placeholder="Identidad / Documento (opcional)">
         <div class="grid sm:grid-cols-2 gap-2">
-          <input id="gUser" class="field" placeholder="Usuario (opcional)" />
-          <input id="gPass" class="field" placeholder="Contraseña (opcional)" />
+          <input id="gUser" class="field" placeholder="Usuario (opcional)">
+          <input id="gPass" class="field" placeholder="Contraseña (opcional)">
         </div>
-        <button class="btn-green">Agregar guardia</button>
+        <button class="btn-green">Agregar Guardia</button>
       </form>
       <div id="guardList" class="card-glass overflow-y-auto max-h-96"></div>
     </div>
 
-    <!-- ───────────── EMPRESAS ───────────── -->
+    <!-- ══════════════ EMPRESAS ══════════════ -->
     <div id="companies" class="tab-pane hidden">
       <h3 class="title">Empresas</h3>
       <form id="comForm" class="card-glass space-y-2 md:w-1/2 mb-4">
-        <input id="comName"  class="field" placeholder="Nombre de la empresa" required />
-        <input id="comUnit"  class="field" placeholder="Local / Unidad" required />
-        <input id="comPhone" class="field" placeholder="Teléfono" required />
-        <input id="comAddr"  class="field" placeholder="Dirección" required />
-        <button class="btn-green">Agregar empresa</button>
+        <input id="comName"  class="field" placeholder="Nombre de la empresa" required>
+        <input id="comUnit"  class="field" placeholder="Local / Unidad" required>
+        <input id="comPhone" class="field" placeholder="Teléfono" required>
+        <input id="comAddr"  class="field" placeholder="Dirección" required>
+        <button class="btn-green">Agregar Empresa</button>
       </form>
       <div id="comList" class="card-glass overflow-y-auto max-h-96"></div>
     </div>
 
-    <!-- ───────────── PAGOS ───────────── -->
+    <!-- ══════════════ PAGOS ══════════════ -->
     <div id="payments" class="tab-pane hidden">
-      <h3 class="title">Registrar pago</h3>
+      <h3 class="title">Registrar Pago</h3>
       <form id="payForm" class="card-glass space-y-2 md:w-1/2 mb-4">
         <select id="payRes" class="field"></select>
-        <input id="payMonto" type="number" class="field" placeholder="Monto (L.)" required />
-        <input id="payMes"   type="month"  class="field" required />
+        <input id="payMonto" type="number" class="field" placeholder="Monto (L.)" required>
+        <input id="payMes"   type="month"  class="field" required>
         <button class="btn-indigo">Registrar</button>
       </form>
       <div id="payList" class="card-glass overflow-y-auto max-h-96"></div>
     </div>
 
-    <!-- ───────────── DEUDAS ───────────── -->
+    <!-- ══════════════ PENDIENTES ══════════════ -->
     <div id="debts" class="tab-pane hidden">
       <h3 class="title">Pendientes de pago</h3>
       <form id="debtForm" class="card-glass space-y-2 md:w-1/2 mb-4">
         <select id="debtRes" class="field"></select>
-        <input id="debtMes"    type="month"  class="field" required />
-        <input id="debtAmount" type="number" class="field" placeholder="Monto (L.)" required />
+        <input id="debtMes"    type="month"  class="field" required>
+        <input id="debtAmount" type="number" class="field" placeholder="Monto (L.)" required>
         <button class="btn-amber">Agregar deuda</button>
       </form>
       <canvas id="chartDebts" class="w-full bg-white rounded-lg mb-4"></canvas>
       <div id="debtList" class="card-glass overflow-y-auto max-h-96"></div>
     </div>
-
-    <!-- ───────────── AJUSTES (Admin) ───────────── -->
+    <!-- ═════════════ AJUSTES (Admin) ═════════════ -->
     <div id="settings" class="tab-pane hidden">
       <h3 class="title">Ajustes de administrador</h3>
       <form id="admForm" class="card-glass space-y-3 md:w-1/2">
-        <input id="admUser" class="field" placeholder="Nuevo usuario" required />
-        <input id="admPass" class="field" placeholder="Nueva contraseña" required />
+        <input id="admUser" class="field" placeholder="Nuevo usuario" required>
+        <input id="admPass" class="field" placeholder="Nueva contraseña" required>
         <button class="btn-indigo">Actualizar</button>
       </form>
 
       <button id="adminClearAllVisits" class="btn-red px-6 py-2 mt-4">
         🧹 Borrar todo el historial de visitas
       </button>
-    </div>
-
-    <!-- ───────────── SOLICITUDES (Super‑admin) ───────────── -->
-    <div id="requests" class="tab-pane hidden">
-      <h3 class="title">Solicitudes del administrador</h3>
-      <div id="reqList" class="card-glass max-h-[32rem] overflow-y-auto"></div>
     </div>
 
   </section>
