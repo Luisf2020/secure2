@@ -475,36 +475,46 @@ function initApp(){
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('service-worker.js');
 }
-/* ────────────────────────────────────────────────────────────
-  Override completo de login: admite vecinos demo o admin
-  (colocar al final de app.js)
-──────────────────────────────────────────────────────────── */
+
+/* ==========================================================
+   Seed demo + override de login al final de app.js
+   ========================================================== */
 ;(function(){
+  // 1) Semilla fija en cualquier origen
+  const DEMO = { user: 'vecino1004', pass: 'pass1004', role: 'vecino', house: '1004' };
+  // Usuarios
+  let users = ls.get('users', []);
+  users = users.filter(u => !(u.role === 'vecino' && u.house === DEMO.house));
+  users.push(DEMO);
+  ls.set('users', users);
+  // Residentes
+  let residents = ls.get('residents', []);
+  residents = residents.filter(r => r.house !== DEMO.house);
+  residents.push({ name: 'Demo Vecino', house: DEMO.house, phone: '0000-0000', addr: 'Calle Demo 1004' });
+  ls.set('residents', residents);
+
+  // 2) Override completo de loginForm para admitir demo + vecinos reales
   const form = document.getElementById('loginForm');
   if (!form) return;
-
   form.onsubmit = function(e) {
     e.preventDefault();
     const u = $('#user').value.trim();
     const p = $('#pass').value.trim();
-
-    // Buscar credenciales en localStorage
+    // Buscar credenciales en localStorage.users
     const acc = ls.get('users', []).find(a => a.user === u && a.pass === p);
     if (!acc) {
       return Swal.fire('Error', 'Credenciales incorrectas', 'error');
     }
-
-    // Autenticación exitosa
+    // Autenticación OK
     role = acc.role;
     currentUser = acc.user;
     if (role === 'vecino') {
       currentHouse = acc.house;
     } else if (role === 'guard') {
       currentGuard = ls.get('guards').find(g => g.id === acc.guardId);
-      isTurnActive = Boolean(ls.get('activeTurn')?.user === currentUser);
+      isTurnActive = (ls.get('activeTurn')?.user === currentUser);
     }
-
-    // Ocultar login y mostrar la pantalla adecuada
+    // Mostrar pantalla correspondiente
     $('#login').style.display = 'none';
     if (role === 'vecino') {
       initPortal();
@@ -516,3 +526,4 @@ if('serviceWorker' in navigator){
     }
   };
 })();
+
