@@ -10,24 +10,20 @@ const ls = {
   get : (k,d=[])=>JSON.parse(localStorage.getItem(k)||JSON.stringify(d))
 };
 
-/* ── Seed universal de vecinos de prueba ── */
+/* ── Seed universal de vecinos para cualquier origen ── */
 ;(function seedDefaultResidents() {
-  // si no hay ningún residente, sembramos uno demo
-  if (!ls.get('residents', []).length) {
-    const demoResidents = [
-      { name: 'Pedro Pérez', house: '1004', phone: '0000-0000', addr: 'Calle Falsa 123' },
-      { name: 'Juana López', house: '1005', phone: '1111-1111', addr: 'Avenida Siempre Viva 742' }
-    ];
-    ls.set('residents', demoResidents);
+  // Si no hay ningún vecino en storage, sembramos uno demo
+  if (!ls.get('residents').length) {
+    ls.set('residents', [
+      { name: 'Demo Vecino', house: '1004', phone: '0000-0000', addr: 'Calle Demo 1004' }
+    ]);
   }
-  // y creamos usuarios vecinos con credenciales asociadas
+  // Si no hay ningún user con role 'vecino', sembramos sus credenciales
   const users = ls.get('users', []);
-  ls.get('residents').forEach(r => {
-    if (!users.some(u => u.role === 'vecino' && u.house === r.house)) {
-      users.push({ user: `vecino${r.house}`, pass: `pass${r.house}`, role: 'vecino', house: r.house });
-    }
-  });
-  ls.set('users', users);
+  if (!users.some(u => u.role === 'vecino')) {
+    users.push({ user: 'vecino1004', pass: 'pass1004', role: 'vecino', house: '1004' });
+    ls.set('users', users);
+  }
 })();
 
 
