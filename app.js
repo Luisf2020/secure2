@@ -476,54 +476,73 @@ if('serviceWorker' in navigator){
   navigator.serviceWorker.register('service-worker.js');
 }
 
-/* ==========================================================
-   Seed demo + override de login al final de app.js
-   ========================================================== */
-;(function(){
-  // 1) Semilla fija en cualquier origen
+/* ────────────────────────────────────────────────────────────
+   FIX FINAL: seed demo + login universal en cualquier navegador
+   (colocar al final de app.js)
+──────────────────────────────────────────────────────────── */
+(function(){
   const DEMO = { user: 'vecino1004', pass: 'pass1004', role: 'vecino', house: '1004' };
-  // Usuarios
-  let users = ls.get('users', []);
-  users = users.filter(u => !(u.role === 'vecino' && u.house === DEMO.house));
-  users.push(DEMO);
-  ls.set('users', users);
-  // Residentes
+
+  // 1) Semilla DEMO en localStorage para todos los orígenes
+  //   - Residente
   let residents = ls.get('residents', []);
   residents = residents.filter(r => r.house !== DEMO.house);
   residents.push({ name: 'Demo Vecino', house: DEMO.house, phone: '0000-0000', addr: 'Calle Demo 1004' });
   ls.set('residents', residents);
+  //   - Usuario
+  let users = ls.get('users', []);
+  users = users.filter(u => !(u.role === 'vecino' && u.house === DEMO.house));
+  users.push(DEMO);
+  ls.set('users', users);
 
-  // 2) Override completo de loginForm para admitir demo + vecinos reales
+  // 2) Override del login form para usar siempre ls.get('users')
   const form = document.getElementById('loginForm');
   if (!form) return;
-  form.onsubmit = function(e) {
+
+  // Elimina cualquier onsubmit previo
+  form.onsubmit = null;
+
+  form.addEventListener('submit', function(e) {
     e.preventDefault();
     const u = $('#user').value.trim();
     const p = $('#pass').value.trim();
-    // Buscar credenciales en localStorage.users
+
+    // Buscar en localStorage.users
     const acc = ls.get('users', []).find(a => a.user === u && a.pass === p);
     if (!acc) {
       return Swal.fire('Error', 'Credenciales incorrectas', 'error');
     }
-    // Autenticación OK
+
+    // Login exitoso
     role = acc.role;
     currentUser = acc.user;
     if (role === 'vecino') {
       currentHouse = acc.house;
-    } else if (role === 'guard') {
-      currentGuard = ls.get('guards').find(g => g.id === acc.guardId);
-      isTurnActive = (ls.get('activeTurn')?.user === currentUser);
-    }
-    // Mostrar pantalla correspondiente
-    $('#login').style.display = 'none';
-    if (role === 'vecino') {
+      $('#login').style.display = 'none';
       initPortal();
       show('#portal');
     } else {
+      if (role === 'guard') {
+        currentGuard = ls.get('guards').find(g => g.id === acc.guardId);
+        isTurnActive = Boolean(ls.get('activeTurn')?.user === currentUser);
+      }
+      $('#login').style.display = 'none';
       initApp();
       show('#app');
       tab('access');
     }
-  };
+  });
+  
+  // Al cargar la página, ocultar login si ya estaba logueado
+  window.addEventListener('load', () => {
+    const u = $('#user')?.value?.trim();
+    if (role && $('#login').style.display !== 'none') {
+      $('#login').style.display = 'none';
+      if (role === 'vecino') {
+        initPortal(); show('#portal');
+      } else {
+        initApp(); show('#app'); tab('access');
+      }
+    }
+  });
 })();
-
