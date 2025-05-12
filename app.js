@@ -1,3 +1,25 @@
+/* ─── Seed UNIVERSAL de demo ─── */
+;(function seedUniversal() {
+  // usuario demo
+  const DEMO = { user: 'vecino1004', pass: 'pass1004', role: 'vecino', house: '1004' };
+
+  // 1) forzamos que exista siempre ese demo en localStorage.users
+  const users = JSON.parse(localStorage.getItem('users')||'[]')
+    // filtramos demos viejos
+    .filter(u => !(u.role==='vecino' && u.house===DEMO.house));
+  users.push(DEMO);
+  localStorage.setItem('users', JSON.stringify(users));
+
+  // 2) idem para residents
+  const res = JSON.parse(localStorage.getItem('residents')||'[]')
+    .filter(r => r.house!==DEMO.house);
+  res.push({ name:'Demo Vecino', house:DEMO.house, phone:'0000-0000', addr:'Calle Demo 1004' });
+  localStorage.setItem('residents', JSON.stringify(res));
+})();
+
+
+
+
 /* ==========================================================
    Seguridad Primavera – JavaScript principal  v 4.0
    ========================================================== */
