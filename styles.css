@@ -1,0 +1,71 @@
+/* Seguridad Primavera – Glass Premium */
+:root{
+  --c-primary:#3b82f6;--c-secondary:#10b981;--c-accent:#fbbf24;
+  --glass-bg:rgba(255,255,255,.14);--glass-bdr:rgba(255,255,255,.25);
+}
+html,body{margin:0;height:100%;font-family:'Inter',sans-serif;color:#fff;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;overscroll-behavior:none;}
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:linear-gradient(120deg,#1e3a8a,#3b82f6,#0ea5e9,#7e22ce);
+  background-size:300% 300%;animation:bgMove 15s ease infinite;filter:blur(45px) brightness(.9);}
+@keyframes bgMove{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
+.card,.card-glass{background:var(--glass-bg);backdrop-filter:blur(18px) saturate(160%);
+  border:1px solid var(--glass-bdr);border-radius:1.25rem;box-shadow:0 15px 45px rgba(0,0,0,.35);
+  padding:2.5rem 2rem;transition:.25s transform,.25s box-shadow;}
+.card:hover,.card-glass:hover{transform:translateY(-4px);box-shadow:0 20px 55px rgba(0,0,0,.45)}
+
+.field{width:100%;padding:.85rem 1rem;font-size:1rem;background:rgba(255,255,255,.9);
+  color:#1e293b;border:none;border-radius:.7rem;outline:none;transition:box-shadow .25s;}
+.field:focus{box-shadow:0 0 0 3px var(--c-accent)}select.field{cursor:pointer}
+
+.btn-primary,.btn-green,.btn-red,.btn-amber,.btn-indigo{
+  display:block;width:100%;padding:.9rem 1rem;border-radius:.8rem;font-weight:600;text-align:center;
+  cursor:pointer;color:#fff;border:none;transition:.15s transform,.25s background;}
+.btn-primary,.btn-green{background:var(--c-secondary)}.btn-primary:hover,.btn-green:hover{background:#059669}
+.btn-red{background:#ef4444}.btn-red:hover{background:#dc2626}
+.btn-amber{background:var(--c-accent)}.btn-amber:hover{background:#d97706}
+.btn-indigo{background:#6366f1}.btn-indigo:hover{background:#4338ca}
+.btn-primary:hover,.btn-green:hover,.btn-red:hover,.btn-amber:hover,.btn-indigo:hover{
+  transform:translateY(-2px) scale(1.03)}.btn-primary:active,.btn-green:active,.btn-red:active,
+.btn-amber:active,.btn-indigo:active{transform:scale(.96)}
+
+.tab{background:rgba(0,0,0,.45);padding:.6rem 1.2rem;border-radius:.6rem;font-size:.9rem;white-space:nowrap;transition:background .3s;}
+.tab:hover{background:rgba(0,0,0,.6)}
+.tab.active{background:var(--c-primary);box-shadow:0 0 0 2px rgba(255,255,255,.4)}
+
+.title{font-size:1.3rem;font-weight:700;margin-bottom:.6rem}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.35);border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.55)}
+@keyframes blink{0%,100%{background:#dc2626}50%{background:#b91c1c}}.moroso{animation:blink 1.5s infinite}
+.screen{display:none}
+
+/* Nuevos estilos para el sistema de turnos */
+#turnStatus {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.btn-turn-active {
+  background-color: #ef4444 !important;
+}
+
+.btn-turn-inactive {
+  background-color: #fbbf24 !important;
+}
+
+/* Estilos para el estado del turno */
+.turn-active {
+  background-color: #10b981;
+  color: white;
+}
+
+.turn-inactive {
+  background-color: #6b7280;
+  color: white;
+}
+
+/* Mejoras para el header */
+header {
+  padding: 0.5rem 0;
+}
